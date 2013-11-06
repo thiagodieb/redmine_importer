@@ -31,7 +31,7 @@ class ImporterController < ApplicationController
   ISSUE_ATTRS = [:id, :subject, :assigned_to, :fixed_version,
     :author, :description, :category, :priority, :tracker, :status,
     :start_date, :due_date, :done_ratio, :estimated_hours,
-    :parent_issue, :watchers ]
+    :parent_issue, :watchers, :time_entries]
   
   def index
   end
@@ -249,6 +249,7 @@ class ImporterController < ApplicationController
         fixed_version_name = row[attrs_map["fixed_version"]]
         fixed_version_id = fixed_version_name ? version_id_for_name!(project,fixed_version_name,add_versions) : nil
         watchers = row[attrs_map["watchers"]]
+
         # new issue or find exists one
         issue = Issue.new
         journal = nil
@@ -423,6 +424,12 @@ class ImporterController < ApplicationController
           flash.append(:warning,"&nbsp;&nbsp;"+error_message)
         end
       else
+	#puts issue.to_yaml
+	time = row[attrs_map["time_entries"]]
+	@time_entry = TimeEntry.new(:project => project, :issue => issue, :user => User.current,:hours => time,:activity_id=>9,:spent_on=>Time.new,:created_on=>Time.new)
+	@time_entry.save
+	#puts @time_entry.to_yaml
+
         if unique_field
           @issue_by_unique_attr[row[unique_field]] = issue
         end
