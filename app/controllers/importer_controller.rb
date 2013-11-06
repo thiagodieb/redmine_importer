@@ -425,10 +425,12 @@ class ImporterController < ApplicationController
         end
       else
 	#puts issue.to_yaml
-	time = row[attrs_map["time_entries"]]
-	@time_entry = TimeEntry.new(:project => project, :issue => issue, :user => User.current,:hours => time,:activity_id=>9,:spent_on=>Time.new,:created_on=>Time.new)
-	@time_entry.save
-	#puts @time_entry.to_yaml
+	if (row[attrs_map["time_entries"]])
+	  time = row[attrs_map["time_entries"]]
+	  @time_entry = TimeEntry.new(:project => project, :issue => issue, :user => User.current,:hours => time,:activity_id=>9,:spent_on=>Time.new,:created_on=>Time.new)
+	  @time_entry.save
+	  #puts @time_entry.to_yaml
+	end
 
         if unique_field
           @issue_by_unique_attr[row[unique_field]] = issue
